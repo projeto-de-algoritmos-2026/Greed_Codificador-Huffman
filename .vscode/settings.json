@@ -1,5 +1,7 @@
 {
   "cSpell.words": ["huffman", "Werror", "Wextra", "Wpedantic"],
   "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+  "C_Cpp.default.compileCommands": "${workspaceFolder}/debug/compile_commands.json",
+  "C_Cpp.default.cppStandard": "c++20",
   "cmake.buildDirectory": "${workspaceFolder}/debug"
 }
