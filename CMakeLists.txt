@@ -19,6 +19,7 @@ endif()
 add_library(
     huffman_lib
     src/core/frequency_table.cpp
+    src/core/bit_stream.cpp
 )
 
 target_include_directories(
@@ -57,6 +58,7 @@ enable_testing()
 add_executable(
     huffman_tests
     tests/test_frequency_table.cpp
+    tests/test_bit_stream.cpp
 )
 
 target_link_libraries(
