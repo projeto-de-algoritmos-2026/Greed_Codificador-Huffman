@@ -20,6 +20,7 @@ add_library(
     huffman_lib
     src/core/frequency_table.cpp
     src/core/bit_stream.cpp
+    src/core/huffman_tree.cpp
 )
 
 target_include_directories(
@@ -59,6 +60,7 @@ add_executable(
     huffman_tests
     tests/test_frequency_table.cpp
     tests/test_bit_stream.cpp
+    tests/test_huffman_tree.cpp
 )
 
 target_link_libraries(
