@@ -119,11 +119,18 @@ TEST(BitReader, ReadBitAfterEndReturnsNullopt)
 TEST(BitReader, ReadBitCrossesByteBoundary)
 {
     const ByteBuffer data = {0x01, 0x80};
+
     BitReader reader(data);
     for (int i = 0; i < 7; ++i)
         (void)reader.readBit();
-    EXPECT_EQ(reader.readBit(), 1);
-    EXPECT_EQ(reader.readBit(), 1);
+
+    auto readBit = reader.readBit();
+    ASSERT_TRUE(readBit.has_value());
+    EXPECT_EQ(*readBit, 1);
+
+    readBit = reader.readBit();
+    ASSERT_TRUE(readBit.has_value());
+    EXPECT_EQ(*readBit, 1);
 }
 
 // === BitReader::exhausted ===
@@ -153,4 +160,26 @@ TEST(BitReader, ExhaustedIsTrueAfterReadingAllBits)
     EXPECT_TRUE(reader.exhausted());
 }
 
-// TEST(BitStream, _){};
+// === BitStream ===
+
+TEST(BitStream, WriteAndReadBits)
+{
+    ByteBuffer buffer;
+
+    const int bits[] = {1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0};
+    {
+        BitWriter writer(buffer);
+        for (int bit : bits)
+            writer.writeBit(bit);
+        writer.flush();
+    }
+
+    BitReader reader(buffer);
+
+    for (int bit : bits)
+    {
+        auto readBit = reader.readBit();
+        ASSERT_TRUE(readBit.has_value());
+        EXPECT_EQ(*readBit, bit);
+    }
+}
