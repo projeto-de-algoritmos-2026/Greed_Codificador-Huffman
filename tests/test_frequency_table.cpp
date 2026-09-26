@@ -51,4 +51,11 @@ TEST(FrequencyTable, AccumulateMultipleTimes)
     EXPECT_EQ(table.totalSymbols(), 4u);
 }
 
-// TEST(FrequencyTable, _) {}
+TEST(FrequencyTable, AddMethod)
+{
+    FrequencyTable table;
+    table.add('k', 1000);
+    table.add('k', 5);
+    EXPECT_EQ(table.getFrequency(Byte{'k'}), 1005u);
+    EXPECT_EQ(table.totalSymbols(), 1005u);
+}

@@ -24,6 +24,8 @@ namespace huffman::core
             return counts_[symbol];
         }
 
+        void add(Byte symbol, std::uint64_t count) noexcept;
+
     private:
         std::array<std::uint64_t, kAlphabetSize> counts_{};
     };

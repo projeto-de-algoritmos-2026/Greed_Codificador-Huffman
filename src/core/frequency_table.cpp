@@ -32,4 +32,9 @@ namespace huffman::core
         }
         return distinct;
     }
+
+    void FrequencyTable::add(Byte symbol, std::uint64_t count) noexcept
+    {
+        counts_[symbol] += count;
+    }
 }
