@@ -5,7 +5,7 @@
       "name": "Debug (CMake)",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/debug/meu_programa",
+      "program": "${workspaceFolder}/debug/huffman_tests",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",

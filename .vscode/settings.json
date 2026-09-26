@@ -1,0 +1,5 @@
+{
+  "cSpell.words": ["huffman", "Werror", "Wextra", "Wpedantic"],
+  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+  "cmake.buildDirectory": "${workspaceFolder}/debug"
+}
