@@ -53,7 +53,7 @@ namespace huffman::testing
         {
             const auto it = files_.find(key(p));
             if (it == files_.end())
-                throw std::runtime_error("arquivo inexistente: " + key(p));
+                throw std::runtime_error("file does not exist: " + key(p));
             return it->second;
         }
 
