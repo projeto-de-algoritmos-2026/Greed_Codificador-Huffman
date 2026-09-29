@@ -73,6 +73,7 @@ add_executable(
     tests/ports/test_in_memory_file_system.cpp
     tests/app/test_use_cases.cpp
     tests/archive/test_tar_packer.cpp
+    tests/app/test_directory_use_cases.cpp
 )
 
 target_include_directories(
