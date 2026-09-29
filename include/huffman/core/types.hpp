@@ -14,6 +14,7 @@ namespace huffman::core
 
     inline constexpr std::size_t kAlphabetSize = 256;
     using CodeLengths = std::array<CodeLength, kAlphabetSize>;
+    inline constexpr CodeLength kMaxUsableLength = 32;
 }
 
 #endif
