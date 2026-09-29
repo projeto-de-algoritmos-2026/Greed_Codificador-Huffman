@@ -29,7 +29,7 @@ TEST(InMemoryFileSystem, WriteFileCreatesParentDirectories)
 TEST(InMemoryFileSystem, ReadingNonexistentFileThrows)
 {
     InMemoryFileSystem fs;
-    EXPECT_THROW(fs.readFile("nao/existe.txt"), std::runtime_error);
+    EXPECT_THROW(fs.readFile("does/not_exist.txt"), std::runtime_error);
 }
 
 TEST(InMemoryFileSystem, ListRecursiveIsRelativeAndSorted)
@@ -49,10 +49,10 @@ TEST(InMemoryFileSystem, ListRecursiveIsRelativeAndSorted)
 TEST(InMemoryFileSystem, EmptyDirectoryAppearsInListing)
 {
     InMemoryFileSystem fs;
-    fs.createDirectories("proj/vazio");
+    fs.createDirectories("proj/empty");
 
     const auto entries = fs.listRecursive("proj");
     ASSERT_EQ(entries.size(), 1u);
-    EXPECT_EQ(entries[0].relativePath, "vazio");
+    EXPECT_EQ(entries[0].relativePath, "empty");
     EXPECT_TRUE(entries[0].isDirectory);
 }
