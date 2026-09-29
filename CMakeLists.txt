@@ -21,6 +21,7 @@ add_library(
     src/core/frequency_table.cpp
     src/core/bit_stream.cpp
     src/core/huffman_tree.cpp
+    src/core/canonical_code.cpp
 )
 
 target_include_directories(
@@ -61,6 +62,7 @@ add_executable(
     tests/test_frequency_table.cpp
     tests/test_bit_stream.cpp
     tests/test_huffman_tree.cpp
+    tests/test_canonical_code.cpp
 )
 
 target_link_libraries(
