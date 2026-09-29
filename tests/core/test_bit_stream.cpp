@@ -42,7 +42,7 @@ TEST(BitWriter, WriteBitsUsesOnlyLowCountBits)
 {
     ByteBuffer buffer;
     BitWriter writer(buffer);
-    writer.writeBits(0b11111101, 3); // só "101" deve ser escrito
+    writer.writeBits(0b11111101, 3); // only "101" should be written
     writer.flush();
     EXPECT_EQ(buffer, (ByteBuffer{0b10100000}));
 }
