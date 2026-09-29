@@ -80,7 +80,7 @@ TEST(RoundTrip, SkewedInputCompresses)
 TEST(Decoder, DetectsTruncation)
 {
     EncodedBlock block =
-        HuffmanEncoder::encode(fromStr("dados suficientes para gerar muitos bits"));
+        HuffmanEncoder::encode(fromStr("enough data to generate many bits"));
     const std::size_t header = 8u + 256u;
     ASSERT_GT(block.bytes.size(), header);
 
