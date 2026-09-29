@@ -38,7 +38,7 @@ namespace huffman::core
         ByteBuffer output;
         output.reserve(static_cast<std::size_t>(symbolCount));
         if (symbolCount == 0)
-            return output; // arquivo vazio
+            return output;
 
         const CanonicalCode code = CanonicalCode::fromCodeLengths(lengths);
         const std::span<const Byte> payload = input.subspan(kHeaderTotal);
