@@ -27,7 +27,7 @@ namespace huffman::core
     ByteBuffer HuffmanDecoder::decode(std::span<const Byte> input)
     {
         if (input.size() < kHeaderTotal)
-            throw CorruptDataError("cabeçalho incompleto");
+            throw CorruptDataError("truncated data: incomplete header");
 
         const std::uint64_t symbolCount = readUint64LE(input, 0);
 
@@ -50,7 +50,7 @@ namespace huffman::core
                 code.decodeSymbol([&reader]()
                                   { return reader.readBit(); });
             if (!sym)
-                throw CorruptDataError("dados truncados: faltam símbolos");
+                throw CorruptDataError("truncated data: fewer symbols than expected");
             output.push_back(*sym);
         }
 
