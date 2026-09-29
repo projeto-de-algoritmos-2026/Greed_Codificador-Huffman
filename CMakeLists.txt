@@ -24,6 +24,7 @@ add_library(
     src/core/canonical_code.cpp
     src/core/encoder.cpp
     src/core/decoder.cpp
+    src/ports/file_system.cpp
 )
 
 target_include_directories(
@@ -61,11 +62,18 @@ enable_testing()
 
 add_executable(
     huffman_tests
-    tests/test_frequency_table.cpp
-    tests/test_bit_stream.cpp
-    tests/test_huffman_tree.cpp
-    tests/test_canonical_code.cpp
-    tests/test_encoder_decoder.cpp
+    tests/core/test_frequency_table.cpp
+    tests/core/test_bit_stream.cpp
+    tests/core/test_huffman_tree.cpp
+    tests/core/test_canonical_code.cpp
+    tests/core/test_encoder_decoder.cpp
+    tests/ports/test_in_memory_file_system.cpp
+)
+
+target_include_directories(
+    huffman_tests
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests
 )
 
 target_link_libraries(
