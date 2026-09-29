@@ -22,6 +22,8 @@ add_library(
     src/core/bit_stream.cpp
     src/core/huffman_tree.cpp
     src/core/canonical_code.cpp
+    src/core/encoder.cpp
+    src/core/decoder.cpp
 )
 
 target_include_directories(
@@ -63,6 +65,7 @@ add_executable(
     tests/test_bit_stream.cpp
     tests/test_huffman_tree.cpp
     tests/test_canonical_code.cpp
+    tests/test_encoder_decoder.cpp
 )
 
 target_link_libraries(
