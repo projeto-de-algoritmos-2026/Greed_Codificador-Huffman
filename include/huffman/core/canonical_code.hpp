@@ -42,31 +42,27 @@ namespace huffman::core
         [[nodiscard]] std::optional<Byte> decodeSymbol(ReadBitFn &&readBit) const
         {
             std::uint32_t code = 0;
-            for (CodeLength length = 1; length <= maxLength_; ++length)
+
+            for (CodeLength len = 1; len <= maxLength_; ++len)
             {
-                std::uint32_t code = 0;
+                const std::optional<int> bit = readBit();
 
-                for (CodeLength len = 1; len <= maxLength_; ++len)
+                if (!bit)
                 {
-                    const std::optional<int> bit = readBit();
+                    return std::nullopt;
+                }
 
-                    if (!bit)
+                code = (code << 1) | static_cast<std::uint32_t>(*bit);
+                const std::uint32_t count = countByLength_[len];
+
+                if (count != 0)
+                {
+                    const std::uint32_t first = firstCode_[len];
+
+                    if (code >= first && code < first + count)
                     {
-                        return std::nullopt;
-                    }
-
-                    code = (code << 1) | static_cast<std::uint32_t>(*bit);
-                    const std::uint32_t count = countByLength_[len];
-
-                    if (count != 0)
-                    {
-                        const std::uint32_t first = firstCode_[len];
-
-                        if (code >= first && code < first + count)
-                        {
-                            const std::uint32_t idx = firstIndex_[len] + (code - first);
-                            return sortedSymbols_[idx];
-                        }
+                        const std::uint32_t idx = firstIndex_[len] + (code - first);
+                        return sortedSymbols_[idx];
                     }
                 }
             }
