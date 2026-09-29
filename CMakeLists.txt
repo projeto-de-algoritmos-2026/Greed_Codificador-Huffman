@@ -27,6 +27,7 @@ add_library(
     src/ports/file_system.cpp
     src/app/compress_use_case.cpp
     src/app/decompress_use_case.cpp
+    src/archive/tar_packer.cpp
 )
 
 target_include_directories(
@@ -71,6 +72,7 @@ add_executable(
     tests/core/test_encoder_decoder.cpp
     tests/ports/test_in_memory_file_system.cpp
     tests/app/test_use_cases.cpp
+    tests/archive/test_tar_packer.cpp
 )
 
 target_include_directories(
