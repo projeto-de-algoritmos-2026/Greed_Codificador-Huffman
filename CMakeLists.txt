@@ -29,6 +29,7 @@ add_library(
     src/app/decompress_use_case.cpp
     src/archive/tar_packer.cpp
     src/infra/std_file_system.cpp
+    src/cli/args.cpp
 )
 
 target_include_directories(
@@ -39,6 +40,28 @@ target_include_directories(
 
 target_compile_options(
     huffman_lib
+    PRIVATE
+        -Wall
+        -Wextra
+        -Wpedantic
+        -Werror
+)
+
+# === Executável CLI ===
+
+add_executable(
+    huffman
+    apps/cli/main.cpp
+)
+
+target_link_libraries(
+    huffman
+    PRIVATE
+        huffman_lib
+)
+
+target_compile_options(
+    huffman
     PRIVATE
         -Wall
         -Wextra
@@ -76,6 +99,8 @@ add_executable(
     tests/archive/test_tar_packer.cpp
     tests/app/test_directory_use_cases.cpp
     tests/infra/test_std_file_system.cpp
+    tests/cli/test_cli_args.cpp
+    tests/cli/test_e2e.cpp
 )
 
 target_include_directories(
@@ -90,6 +115,14 @@ target_link_libraries(
         huffman_lib
         GTest::gtest_main
 )
+
+target_compile_definitions(
+    huffman_tests
+    PRIVATE
+        HUFFMAN_BIN="$<TARGET_FILE:huffman>"
+)
+
+add_dependencies(huffman_tests huffman)
 
 include(GoogleTest)
 
