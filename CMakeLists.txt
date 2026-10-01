@@ -18,24 +18,24 @@ endif()
 
 add_library(
     huffman_lib
-    src/core/frequency_table.cpp
-    src/core/bit_stream.cpp
-    src/core/huffman_tree.cpp
-    src/core/canonical_code.cpp
-    src/core/encoder.cpp
-    src/core/decoder.cpp
-    src/ports/file_system.cpp
-    src/app/compress_use_case.cpp
-    src/app/decompress_use_case.cpp
-    src/archive/tar_packer.cpp
-    src/infra/std_file_system.cpp
-    src/cli/args.cpp
+    Huffman/src/core/frequency_table.cpp
+    Huffman/src/core/bit_stream.cpp
+    Huffman/src/core/huffman_tree.cpp
+    Huffman/src/core/canonical_code.cpp
+    Huffman/src/core/encoder.cpp
+    Huffman/src/core/decoder.cpp
+    Huffman/src/ports/file_system.cpp
+    Huffman/src/app/compress_use_case.cpp
+    Huffman/src/app/decompress_use_case.cpp
+    Huffman/src/archive/tar_packer.cpp
+    Huffman/src/infra/std_file_system.cpp
+    Huffman/src/cli/args.cpp
 )
 
 target_include_directories(
     huffman_lib
     PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/Huffman/include
 )
 
 target_compile_options(
@@ -89,24 +89,24 @@ enable_testing()
 
 add_executable(
     huffman_tests
-    tests/core/test_frequency_table.cpp
-    tests/core/test_bit_stream.cpp
-    tests/core/test_huffman_tree.cpp
-    tests/core/test_canonical_code.cpp
-    tests/core/test_encoder_decoder.cpp
-    tests/ports/test_in_memory_file_system.cpp
-    tests/app/test_use_cases.cpp
-    tests/archive/test_tar_packer.cpp
-    tests/app/test_directory_use_cases.cpp
-    tests/infra/test_std_file_system.cpp
-    tests/cli/test_cli_args.cpp
-    tests/cli/test_e2e.cpp
+    Huffman/tests/core/test_frequency_table.cpp
+    Huffman/tests/core/test_bit_stream.cpp
+    Huffman/tests/core/test_huffman_tree.cpp
+    Huffman/tests/core/test_canonical_code.cpp
+    Huffman/tests/core/test_encoder_decoder.cpp
+    Huffman/tests/ports/test_in_memory_file_system.cpp
+    Huffman/tests/app/test_use_cases.cpp
+    Huffman/tests/archive/test_tar_packer.cpp
+    Huffman/tests/app/test_directory_use_cases.cpp
+    Huffman/tests/infra/test_std_file_system.cpp
+    Huffman/tests/cli/test_cli_args.cpp
+    Huffman/tests/cli/test_e2e.cpp
 )
 
 target_include_directories(
     huffman_tests
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/tests
+        ${CMAKE_CURRENT_SOURCE_DIR}/Huffman/tests
 )
 
 target_link_libraries(
