@@ -28,6 +28,7 @@ add_library(
     src/app/compress_use_case.cpp
     src/app/decompress_use_case.cpp
     src/archive/tar_packer.cpp
+    src/infra/std_file_system.cpp
 )
 
 target_include_directories(
@@ -74,6 +75,7 @@ add_executable(
     tests/app/test_use_cases.cpp
     tests/archive/test_tar_packer.cpp
     tests/app/test_directory_use_cases.cpp
+    tests/infra/test_std_file_system.cpp
 )
 
 target_include_directories(
