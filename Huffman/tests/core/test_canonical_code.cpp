@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <optional>
+#include <string>
 
 #include "huffman/core/bit_stream.hpp"
 #include "huffman/core/canonical_code.hpp"
@@ -138,4 +139,89 @@ TEST(CanonicalCode, InsufficientBitsReturnsEmpty)
     };
 
     EXPECT_FALSE(canonical_code.decodeSymbol(readBit).has_value());
+}
+
+namespace
+{
+    bool isPrefixOf(const Code &a, const Code &b)
+    {
+        if (a.length > b.length)
+            return false;
+        return (b.bits >> (b.length - a.length)) == a.bits;
+    }
+}
+
+TEST(CanonicalCode, CodesArePrefixFree)
+{
+    const CanonicalCode canonical_code = CanonicalCode::fromCodeLengths(GenerateCodeLengths());
+    const Byte symbols[] = {'A', 'B', 'C', 'D', 'E', 'F'};
+
+    for (Byte a : symbols)
+        for (Byte b : symbols)
+            if (a != b)
+                EXPECT_FALSE(isPrefixOf(canonical_code.codeFor(a), canonical_code.codeFor(b)))
+                    << a << " é prefixo de " << b;
+}
+
+TEST(CanonicalCode, SameLengthCodesAreConsecutiveInSymbolOrder)
+{
+    const CanonicalCode canonical_code = CanonicalCode::fromCodeLengths(GenerateCodeLengths());
+    EXPECT_EQ(canonical_code.codeFor('B').bits, canonical_code.codeFor('A').bits + 1);
+    EXPECT_EQ(canonical_code.codeFor('C').bits, canonical_code.codeFor('B').bits + 1);
+    EXPECT_EQ(canonical_code.codeFor('D').bits, canonical_code.codeFor('C').bits + 1);
+}
+
+TEST(CanonicalCode, KeepsOriginalCodeLengths)
+{
+    const CodeLengths lengths = GenerateCodeLengths();
+    const CanonicalCode canonical_code = CanonicalCode::fromCodeLengths(lengths);
+    EXPECT_EQ(canonical_code.codeLengths(), lengths);
+}
+
+TEST(CanonicalCode, EmptyLengthsDecodeNothing)
+{
+    const CanonicalCode canonical_code = CanonicalCode::fromCodeLengths(CodeLengths{});
+    auto readBit = []() -> std::optional<int>
+    { return 0; };
+    EXPECT_FALSE(canonical_code.decodeSymbol(readBit).has_value());
+}
+
+TEST(CanonicalCode, AllEightBitCodesMapToIdentity)
+{
+    CodeLengths lengths{};
+    lengths.fill(8);
+    const CanonicalCode canonical_code = CanonicalCode::fromCodeLengths(lengths);
+    for (int s = 0; s < 256; ++s)
+    {
+        EXPECT_EQ(canonical_code.codeFor(static_cast<Byte>(s)).bits, static_cast<std::uint32_t>(s));
+        EXPECT_EQ(canonical_code.codeFor(static_cast<Byte>(s)).length, 8);
+    }
+}
+
+TEST(CanonicalCode, RoundTripThroughBitStreamForEverySymbol)
+{
+    CodeLengths lengths{};
+    lengths['a'] = 1;
+    lengths['b'] = 2;
+    lengths['c'] = 3;
+    lengths['d'] = 3;
+    const CanonicalCode canonical_code = CanonicalCode::fromCodeLengths(lengths);
+    const std::string message = "abacabadcbad";
+
+    ByteBuffer buffer;
+    {
+        BitWriter writer(buffer);
+        for (char ch : message)
+        {
+            const Code c = canonical_code.codeFor(static_cast<Byte>(ch));
+            writer.writeBits(c.bits, c.length);
+        }
+        writer.flush();
+    }
+
+    BitReader reader(buffer);
+    auto next = [&]()
+    { return reader.readBit(); };
+    for (char ch : message)
+        EXPECT_EQ(canonical_code.decodeSymbol(next), std::optional<Byte>{static_cast<Byte>(ch)});
 }
