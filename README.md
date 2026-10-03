@@ -2,7 +2,7 @@
 
 **Número da Lista**: 3<br>
 **Conteúdo da Disciplina**: Algoritmos Ambiciosos (Greedy) — Código de Huffman e códigos de prefixo ótimos<br>
-**Link de Apresentação**: _a definir_
+**Link de Apresentação**: https://youtu.be/tSINmvo6Bb0
 
 ## Alunos
 
