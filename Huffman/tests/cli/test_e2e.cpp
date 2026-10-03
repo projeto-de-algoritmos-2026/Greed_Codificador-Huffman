@@ -5,6 +5,8 @@
 #include <fstream>
 #include <string>
 
+#include <sys/wait.h>
+
 namespace fs = std::filesystem;
 
 #ifndef HUFFMAN_BIN
@@ -24,11 +26,16 @@ std::string readFile(const fs::path& p) {
 }
 
 
-int run(const std::string& cmd, const fs::path& in, const fs::path& out) {
+// Executa o binário com os argumentos dados e devolve o código de saída do processo.
+int runArgs(const std::string& args) {
     const std::string line =
-        std::string(HUFFMAN_BIN) + " " + cmd + " \"" + in.string() +
-        "\" \"" + out.string() + "\"";
-    return std::system(line.c_str());
+        "\"" + std::string(HUFFMAN_BIN) + "\" " + args + " > /dev/null 2>&1";
+    const int status = std::system(line.c_str());
+    return WIFEXITED(status) ? WEXITSTATUS(status) : -1;
+}
+
+int run(const std::string& cmd, const fs::path& in, const fs::path& out) {
+    return runArgs(cmd + " \"" + in.string() + "\" \"" + out.string() + "\"");
 }
 
 }
@@ -82,4 +89,72 @@ TEST_F(E2ETest, SingleFileRoundTripThroughBinary) {
     ASSERT_EQ(run("compress", src, huff), 0);
     ASSERT_EQ(run("decompress", huff, out), 0);
     EXPECT_EQ(readFile(out), readFile(src));
+}
+
+TEST_F(E2ETest, BinaryFileRoundTripThroughBinary) {
+    std::string data;
+    for (int rep = 0; rep < 50; ++rep)
+        for (int b = 0; b < 256; ++b)
+            data.push_back(static_cast<char>(b));
+    const fs::path src = root_ / "blob.bin";
+    writeFile(src, data);
+
+    const fs::path huff = root_ / "blob.huff";
+    const fs::path out = root_ / "blob.out";
+
+    ASSERT_EQ(run("compress", src, huff), 0);
+    ASSERT_EQ(run("decompress", huff, out), 0);
+    EXPECT_EQ(readFile(out), data);
+}
+
+TEST_F(E2ETest, RepetitiveTextGetsSmaller) {
+    std::string text;
+    for (int i = 0; i < 2000; ++i)
+        text += "aaaaaaabbbc";
+    const fs::path src = root_ / "repetitive.txt";
+    writeFile(src, text);
+
+    const fs::path huff = root_ / "repetitive.huff";
+    ASSERT_EQ(run("compress", src, huff), 0);
+    EXPECT_LT(fs::file_size(huff), fs::file_size(src));
+}
+
+TEST_F(E2ETest, PathsWithSpacesWork) {
+    const fs::path src = root_ / "pasta com espaco" / "arquivo com espaco.txt";
+    writeFile(src, "conteudo qualquer");
+
+    const fs::path huff = root_ / "saida com espaco.huff";
+    const fs::path out = root_ / "restaurado com espaco.txt";
+
+    ASSERT_EQ(run("compress", src, huff), 0);
+    ASSERT_EQ(run("decompress", huff, out), 0);
+    EXPECT_EQ(readFile(out), readFile(src));
+}
+
+TEST_F(E2ETest, HelpExitsWithZero) {
+    EXPECT_EQ(runArgs(""), 0);
+    EXPECT_EQ(runArgs("--help"), 0);
+}
+
+TEST_F(E2ETest, InvalidArgumentsExitWithTwo) {
+    EXPECT_EQ(runArgs("zip a b"), 2);
+    EXPECT_EQ(runArgs("compress only_input"), 2);
+}
+
+TEST_F(E2ETest, NonexistentInputExitsWithOne) {
+    EXPECT_EQ(run("compress", root_ / "missing.txt", root_ / "x.huff"), 1);
+    EXPECT_EQ(run("decompress", root_ / "missing.huff", root_ / "x.out"), 1);
+}
+
+TEST_F(E2ETest, CorruptedArchiveExitsWithOne) {
+    const fs::path src = root_ / "letter.txt";
+    writeFile(src, "enough text to produce a payload that can be truncated later");
+    const fs::path huff = root_ / "letter.huff";
+    ASSERT_EQ(run("compress", src, huff), 0);
+
+    std::string bytes = readFile(huff);
+    bytes.resize(bytes.size() - 10);
+    writeFile(huff, bytes);
+
+    EXPECT_EQ(run("decompress", huff, root_ / "letter.out"), 1);
 }
